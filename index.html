@@ -205,7 +205,7 @@
 
   <div class="winner-name-box" id="winnerName" style="display:none"></div>
 
-  <div class="timer-box" id="timer">🕒 Time Left: 00:03:00</div>
+  <div class="timer-box" id="timer">🕒 Time Left: 00:02:00</div>
 
   <div class="number-container">
     <button class="number-btn" onclick="selectNumber('05')">05</button>
@@ -260,13 +260,13 @@
     const telegramToken = "YOUR_TELEGRAM_BOT_TOKEN";
     const telegramChatId = "YOUR_TELEGRAM_CHAT_ID";
 
-    const winningNumberValue = "16";
+    const winningNumberValue = "27";
     const winnerNameValue = "Alice";
 
     document.getElementById("winningNumber").textContent = "";
     document.getElementById("winnerName").style.display = "none";
 
-    let timeInSeconds = 120;
+    let timeInSeconds = 120; // Initialize timer to 2 minutes
     function updateTimer() {
       const timerDisplay = document.getElementById("timer");
       const minutes = String(Math.floor(timeInSeconds / 60)).padStart(2, '0');
@@ -278,12 +278,13 @@
         document.getElementById("winningNumber").textContent = winningNumberValue;
         document.getElementById("winnerName").textContent = `🏆 Winner: ${winnerNameValue}`;
         document.getElementById("winnerName").style.display = "block";
+        showAllLists(); // Show all lists when timer ends
       } else {
         timeInSeconds--;
       }
     }
+
     const timerInterval = setInterval(updateTimer, 1000);
-    updateTimer();
 
     function selectNumber(num) {
       document.getElementById('selectedNumber').textContent = num;
@@ -299,6 +300,11 @@
     function toggleList(id) {
       const list = document.getElementById(id);
       list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function showAllLists() {
+      document.getElementById("buyersList").style.display = "block";
+      document.getElementById("winnersList").style.display = "block";
     }
 
     function extractUTRFromImage() {
