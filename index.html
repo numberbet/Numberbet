@@ -2,66 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Win Go Betting Game</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: #0e0e0e;
       color: #fff;
       text-align: center;
-      padding: 20px;
+      padding: 1rem;
       margin: 0;
+      font-size: 1rem;
     }
 
     h1 {
-      margin-top: 10px;
-      font-size: 28px;
+      margin-top: 0.5rem;
+      font-size: 1.8rem;
       color: #00ffcc;
     }
 
     .wallet-card {
       background: #2e3a75;
-      border-radius: 20px;
-      padding: 20px;
-      width: 320px;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      width: 90%;
+      max-width: 300px;
       color: white;
       text-align: center;
-      margin: 20px auto;
+      margin: 1.2rem auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .wallet-amount {
-      font-size: 28px;
+      font-size: 1.8rem;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 0.3rem;
     }
 
     .wallet-label {
-      font-size: 16px;
+      font-size: 1rem;
       color: #dcdcdc;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
     }
 
     .wallet-label i {
-      font-size: 20px;
+      font-size: 1.2rem;
     }
 
     .wallet-actions {
       display: flex;
       justify-content: space-around;
-      gap: 20px;
+      gap: 1rem;
     }
 
     .wallet-btn {
       flex: 1;
-      padding: 10px 0;
-      font-size: 14px;
+      padding: 0.6rem 0;
+      font-size: 0.9rem;
       border: none;
-      border-radius: 25px;
+      border-radius: 1.5rem;
       font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
@@ -79,22 +86,23 @@
 
     .form-container {
       display: none;
-      margin-top: 30px;
-      padding: 20px;
+      margin-top: 1.5rem;
+      padding: 1.2rem;
       background: #1e1e1e;
-      border-radius: 15px;
+      border-radius: 0.9rem;
       width: 90%;
-      max-width: 350px;
+      max-width: 320px;
       margin-left: auto;
       margin-right: auto;
     }
 
     input, button {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 10px;
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.6rem 0;
+      border-radius: 0.6rem;
       border: none;
+      font-size: 0.9rem;
     }
 
     input {
@@ -108,22 +116,24 @@
     }
 
     img {
-      width: 200px;
-      margin: 10px 0;
+      width: 100%;
+      max-width: 180px;
+      margin: 0.6rem 0;
     }
 
     .qr-error {
       color: #ff5555;
-      font-size: 14px;
-      margin: 10px 0;
+      font-size: 0.9rem;
+      margin: 0.6rem 0;
     }
 
     .card {
       background: #1c1c1e;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 500px;
+      border-radius: 0.6rem;
+      padding: 1.2rem;
+      margin: 1.2rem auto;
+      width: 90%;
+      max-width: 400px;
       box-shadow: 0 0 10px #00ff99;
       position: relative;
     }
@@ -132,27 +142,27 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     .timer {
-      font-size: 2em;
-      padding: 10px 20px;
+      font-size: 1.5rem;
+      padding: 0.6rem 1.2rem;
       background: #222;
-      border-radius: 10px;
+      border-radius: 0.6rem;
       box-shadow: 0 0 5px #0f0;
     }
 
     .winning-box {
-      width: 60px;
-      height: 60px;
-      font-size: 1.5em;
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
       background: #444;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
+      border-radius: 0.6rem;
       box-shadow: 0 0 5px #f0f;
       color: #fff;
     }
@@ -160,14 +170,14 @@
     .number-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      margin: 20px 0;
+      gap: 0.6rem;
+      margin: 1rem 0;
     }
 
     .number-btn {
-      width: 60px;
-      height: 60px;
-      font-size: 1.5em;
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
       font-weight: bold;
       color: #fff;
       border: none;
@@ -205,18 +215,18 @@
     .color-grid {
       display: flex;
       justify-content: center;
-      gap: 15px;
-      margin: 20px 0;
+      gap: 0.9rem;
+      margin: 1rem 0;
     }
 
     .color-btn {
-      width: 100px;
-      height: 50px;
-      font-size: 1.2em;
+      width: 80px;
+      height: 40px;
+      font-size: 1rem;
       font-weight: bold;
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 0.6rem;
       cursor: pointer;
       transition: transform 0.2s;
     }
@@ -242,16 +252,16 @@
       display: flex;
       justify-content: center;
       gap: 0;
-      margin: 20px 0;
-      width: 200px;
+      margin: 1rem 0;
+      width: 160px;
       margin-left: auto;
       margin-right: auto;
     }
 
     .size-btn {
       flex: 1;
-      height: 50px;
-      font-size: 1.2em;
+      height: 40px;
+      font-size: 1rem;
       font-weight: bold;
       color: #fff;
       border: none;
@@ -261,14 +271,14 @@
 
     .size-btn.big {
       background: #ff6200;
-      border-top-left-radius: 25px;
-      border-bottom-left-radius: 25px;
+      border-top-left-radius: 1.5rem;
+      border-bottom-left-radius: 1.5rem;
     }
 
     .size-btn.small {
       background: #00c4b4;
-      border-top-right-radius: 25px;
-      border-bottom-right-radius: 25px;
+      border-top-right-radius: 1.5rem;
+      border-bottom-right-radius: 1.5rem;
     }
 
     .size-btn:hover {
@@ -282,9 +292,9 @@
     }
 
     #historyList li, #myBetHistoryList li {
-      margin: 3px 0;
-      font-size: 0.9em; /* Reduced font size for smaller game history */
-      line-height: 1.2; /* Adjusted line height for compactness */
+      margin: 0.2rem 0;
+      font-size: 0.8rem;
+      line-height: 1.1;
     }
 
     #historyList a {
@@ -297,25 +307,24 @@
       text-decoration: underline;
     }
 
-    /* Style for emphasizing "Big" in game history */
     .size-big {
-      font-size: 1.1em; /* Slightly larger than the rest of the history entry */
+      font-size: 0.9rem;
       font-weight: bold;
-      color: #ff6200; /* Match the "Big" button color for consistency */
+      color: #ff6200;
     }
 
     .operator-btn {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 0.6rem;
+      right: 0.6rem;
       background: transparent;
       color: #555;
       border: none;
-      font-size: 20px;
+      font-size: 1.2rem;
       cursor: pointer;
       padding: 0;
-      width: 20px;
-      height: 20px;
+      width: 1.2rem;
+      height: 1.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -323,25 +332,26 @@
 
     .operator-panel {
       background: #2e2e2e;
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 20px;
+      border-radius: 0.6rem;
+      padding: 0.9rem;
+      margin-top: 1rem;
       width: 90%;
-      max-width: 350px;
+      max-width: 320px;
       margin-left: auto;
       margin-right: auto;
       box-shadow: 0 0 5px #00ff99;
     }
 
     .operator-panel h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
+      margin: 0 0 0.6rem;
+      font-size: 1.1rem;
     }
 
     .operator-panel button {
       background: #27c76b;
       color: white;
-      margin: 5px 0;
+      margin: 0.3rem 0;
+      font-size: 0.9rem;
     }
 
     .operator-panel .close-btn {
@@ -351,44 +361,45 @@
     .operator-panel ul {
       list-style: none;
       padding: 0;
-      margin: 10px 0;
+      margin: 0.6rem 0;
     }
 
     .operator-panel li {
       background: #444;
-      padding: 5px;
-      margin: 5px 0;
-      border-radius: 5px;
+      padding: 0.3rem;
+      margin: 0.3rem 0;
+      border-radius: 0.3rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size: 0.8rem;
     }
 
     .operator-panel li button {
       width: auto;
-      padding: 5px 10px;
-      font-size: 12px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.7rem;
     }
 
     .deposit-amounts {
       display: flex;
       justify-content: space-between;
-      gap: 5px;
-      margin: 10px 0;
-      flex-wrap: nowrap;
+      gap: 0.3rem;
+      margin: 0.6rem 0;
+      flex-wrap: wrap;
     }
 
     .amount-btn {
       background: #27c76b;
       color: white;
       border: none;
-      border-radius: 10px;
-      padding: 8px 10px;
+      border-radius: 0.6rem;
+      padding: 0.5rem;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 0.9rem;
       font-weight: bold;
       flex: 1;
-      min-width: 60px;
+      min-width: 50px;
     }
 
     .amount-btn:hover {
@@ -404,16 +415,17 @@
       display: flex;
       justify-content: center;
       gap: 0;
-      margin-bottom: 10px;
-      width: 300px;
+      margin-bottom: 0.6rem;
+      width: 90%;
+      max-width: 250px;
       margin-left: auto;
       margin-right: auto;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 10px;
-      font-size: 1em;
+      padding: 0.6rem;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #fff;
       border: none;
@@ -423,14 +435,14 @@
 
     .tab-btn.game-history {
       background: #555;
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
+      border-top-left-radius: 0.6rem;
+      border-bottom-left-radius: 0.6rem;
     }
 
     .tab-btn.my-bet-history {
       background: #555;
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
+      border-top-right-radius: 0.6rem;
+      border-bottom-right-radius: 0.6rem;
     }
 
     .tab-btn.active {
@@ -439,8 +451,8 @@
     }
 
     .status-message {
-      font-size: 14px;
-      margin: 10px 0;
+      font-size: 0.9rem;
+      margin: 0.6rem 0;
     }
 
     .status-message.success {
@@ -449,6 +461,184 @@
 
     .status-message.error {
       color: #ff5555;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .wallet-card {
+        max-width: 95%;
+        padding: 1rem;
+      }
+
+      .wallet-amount {
+        font-size: 1.5rem;
+      }
+
+      .wallet-label {
+        font-size: 0.9rem;
+      }
+
+      .wallet-btn {
+        font-size: 0.8rem;
+        padding: 0.5rem 0;
+      }
+
+      .form-container {
+        max-width: 95%;
+        padding: 1rem;
+      }
+
+      input, button {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+      }
+
+      img {
+        max-width: 160px;
+      }
+
+      .card {
+        max-width: 95%;
+        padding: 1rem;
+      }
+
+      .timer {
+        font-size: 1.2rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .winning-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .number-grid {
+        gap: 0.5rem;
+      }
+
+      .number-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .color-grid {
+        gap: 0.5rem;
+      }
+
+      .color-btn {
+        width: 60px;
+        height: 35px;
+        font-size: 0.8rem;
+      }
+
+      .size-grid {
+        width: 120px;
+      }
+
+      .size-btn {
+        height: 35px;
+        font-size: 0.8rem;
+      }
+
+      .history-tabs {
+        max-width: 200px;
+      }
+
+      .tab-btn {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+      }
+
+      .operator-panel {
+        max-width: 95%;
+        padding: 0.8rem;
+      }
+
+      .operator-panel h3 {
+        font-size: 1rem;
+      }
+
+      .amount-btn {
+        font-size: 0.8rem;
+        min-width: 45px;
+        padding: 0.4rem;
+      }
+
+      #historyList li, #myBetHistoryList li {
+        font-size: 0.7rem;
+      }
+
+      .size-big {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (min-width: 601px) {
+      .wallet-card {
+        max-width: 320px;
+      }
+
+      .form-container {
+        max-width: 350px;
+      }
+
+      .card {
+        max-width: 500px;
+      }
+
+      .operator-panel {
+        max-width: 350px;
+      }
+
+      .history-tabs {
+        max-width: 300px;
+      }
+
+      .number-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+
+      .color-btn {
+        width: 100px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+
+      .size-grid {
+        width: 200px;
+      }
+
+      .size-btn {
+        height: 50px;
+        font-size: 1.2rem;
+      }
+
+      .amount-btn {
+        min-width: 60px;
+        font-size: 0.9rem;
+      }
+
+      .winning-box {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+
+      .timer {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
@@ -556,7 +746,7 @@
       document.getElementById('gameHistorySection').style.display = 'block';
       document.getElementById('myBetHistorySection').style.display = 'none';
       document.querySelector('.tab-btn.game-history').classList.add('active');
-      document.querySelector('.tab-btn.my-bet-history').classList.remove('active');
+      document.querySelector('.tab-btn obl-btn.my-bet-history').classList.remove('active');
     }
 
     function showMyBetHistory() {
@@ -829,7 +1019,6 @@
         else if ([2, 4, 6, 8].includes(winNum)) numColor = "#cc0000";
         else numColor = "#009933";
 
-        // Modified history entry to emphasize "Big"
         const sizeClass = winSize === "Big" ? 'class="size-big"' : '';
         historyEl.innerHTML = `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${displayPeriodNumber}, ${winNum}, '${winColor}', '${winSize}')">${displayPeriodNumber}</a>: <span style="color:${numColor}; font-weight:bold;">${winNum}</span>, <span style="color:${colorStyles[winColor]}; font-weight:bold;">${winColor}</span>, <span ${sizeClass} style="font-weight:bold;">${winSize}</span></li>` + historyEl.innerHTML;
 
