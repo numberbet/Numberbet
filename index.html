@@ -1,471 +1,963 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UTR Number Collection</title>
+  <meta charset="UTF-8">
+  <title>Win Go Betting Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      color: white;
-    }
-
-    .winning-number-box {
-      width: 200px;
-      height: 200px;
-      background-color: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 40px;
-      font-size: 60px;
-      font-weight: bold;
-      color: transparent;
-      border-radius: 10px;
-      border: 2px solid #ff006e;
-      box-shadow: 0 0 20px 5px #ff006e, 0 0 30px 5px #ff006e;
-      animation: blink 1.5s infinite alternate;
-    }
-
-    .winning-number {
-      color: #ff006e;
-      text-shadow: 0 0 10px #ff006e, 0 0 20px #ff006e, 0 0 30px #ff006e;
-    }
-
-    .winner-name-box {
-      font-size: 24px;
-      margin-top: 10px;
-      font-weight: bold;
-      color: #00ffcc;
-      text-shadow: 0 0 10px #00ffcc;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 10px;
+      background: #0e0e0e;
+      color: #fff;
       text-align: center;
-    }
-
-    .timer-box {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 20px;
-      color: white;
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    .current-time-box {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 18px;
-      color: white;
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 8px;
-      border-radius: 10px;
-    }
-
-    @keyframes blink {
-      0% {
-        text-shadow: 0 0 10px #ff006e, 0 0 20px #ff006e, 0 0 30px #ff006e;
-        opacity: 1;
-      }
-      100 offend {
-        text-shadow: 0 0 20px #ff006e, 0 0 30px #ff006e, 0 0 40px #ff006e;
-        opacity: 0.5;
-      }
-    }
-
-    .number-container {
-      display: flex;
-      gap: 10px;
-      margin: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .number-btn {
-      background: white;
-      color: #2575fc;
-      font-size: 18px;
-      font-weight: bold;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .number-btn:disabled {
-      background: #ccc;
-      color: #666;
-      cursor: not-allowed;
-    }
-
-    #buyForm {
-      display: none;
-      margin-top: 20px;
-      background: white;
-      color: black;
       padding: 20px;
-      border-radius: 10px;
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 28px;
+      color: #00ffcc;
+    }
+
+    .wallet-card {
+      background: #2e3a75;
+      border-radius: 20px;
+      padding: 20px;
+      width: 320px;
+      color: white;
+      text-align: center;
+      margin: 20px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .wallet-amount {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .wallet-label {
+      font-size: 16px;
+      color: #dcdcdc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .wallet-label i {
+      font-size: 20px;
+    }
+
+    .wallet-actions {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+    }
+
+    .wallet-btn {
+      flex: 1;
+      padding: 10px 0;
+      font-size: 14px;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .wallet-btn.withdraw {
+      background: #d93030;
+      color: white;
+    }
+
+    .wallet-btn.deposit {
+      background: #27c76b;
+      color: white;
+    }
+
+    .form-container {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      background: #1e1e1e;
+      border-radius: 15px;
       width: 90%;
-      max-width: 400px;
+      max-width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    input, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+    }
+
+    input {
+      background: #333;
+      color: white;
     }
 
     .back-btn {
-      background: #dc3545;
+      background: #444;
       color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 15px;
+    }
+
+    img {
+      width: 200px;
+      margin: 10px 0;
+    }
+
+    .qr-error {
+      color: #ff5555;
       font-size: 14px;
+      margin: 10px 0;
     }
 
-    .buy-info {
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .buy-info img {
-      max-width: 100%;
+    .card {
+      background: #1c1c1e;
       border-radius: 10px;
-      margin-bottom: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+      box-shadow: 0 0 10px #00ff99;
+      position: relative;
     }
 
-    .list-btns {
-      margin-top: 30px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .toggle-btn {
-      background: #00ffcc;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .list-btn-container {
+    .top-section {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 20px;
-      margin-top: 10px;
-      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
-    .list-container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
+    .timer {
+      font-size: 2em;
+      padding: 10px 20px;
+      background: #222;
       border-radius: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-      width: 150px;
-      display: none;
+      box-shadow: 0 0 5px #0f0;
     }
 
-    .list-container ul {
+    .winning-box {
+      width: 60px;
+      height: 60px;
+      font-size: 1.5em;
+      background: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #f0f;
+      color: #fff;
+    }
+
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .number-btn {
+      width: 60px;
+      height: 60px;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px #fff;
+      transition: transform 0.2s;
+    }
+
+    .number-btn.red {
+      background: radial-gradient(circle, #ff4444 30%, #aa0000);
+    }
+
+    .number-btn.green {
+      background: radial-gradient(circle, #00cc66 30%, #006633);
+    }
+
+    .number-btn.purple {
+      background: radial-gradient(circle, #aa66cc 30%, #6600aa);
+    }
+
+    .number-btn.mix-red-purple {
+      background: linear-gradient(to right, red 50%, violet 50%);
+    }
+
+    .number-btn.mix-green-purple {
+      background: linear-gradient(to right, green 50%, violet 50%);
+    }
+
+    .number-btn.selected {
+      box-shadow: 0 0 10px #ffff00, 0 0 15px #ff0;
+      transform: scale(1.1);
+    }
+
+    .color-grid {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .color-btn {
+      width: 100px;
+      height: 50px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .color-btn.green {
+      background: green;
+    }
+
+    .color-btn.violet {
+      background: purple;
+    }
+
+    .color-btn.red {
+      background: red;
+    }
+
+    .color-btn.selected {
+      box-shadow: 0 0 10px #ffff00, 0 0 15px #ff0;
+      transform: scale(1.1);
+    }
+
+    .size-grid {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 20px 0;
+      width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .size-btn {
+      flex: 1;
+      height: 50px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .size-btn.big {
+      background: #ff6200;
+      border-top-left-radius: 25px;
+      border-bottom-left-radius: 25px;
+    }
+
+    .size-btn.small {
+      background: #00c4b4;
+      border-top-right-radius: 25px;
+      border-bottom-right-radius: 25px;
+    }
+
+    .size-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    }
+
+    .size-btn.selected {
+      box-shadow: 0 0 10px #ffff00, 0 0 15px #ff0;
+      transform: scale(1.05);
+    }
+
+    #historyList li, #myBetHistoryList li {
+      margin: 5px 0;
+      font-size: 1.1em;
+    }
+
+    .operator-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      color: #555;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .operator-panel {
+      background: #2e2e2e;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      width: 90%;
+      max-width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 5px #00ff99;
+    }
+
+    .operator-panel h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .operator-panel button {
+      background: #27c76b;
+      color: white;
+      margin: 5px 0;
+    }
+
+    .operator-panel .close-btn {
+      background: #d93030;
+    }
+
+    .operator-panel ul {
       list-style: none;
       padding: 0;
-      margin: 0;
+      margin: 10px 0;
     }
 
-    .list-container li {
-      background: rgba(0, 0, 0, 0.3);
-      margin: 5px 0;
+    .operator-panel li {
+      background: #444;
       padding: 5px;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    .loader {
-      display: none;
-      margin-top: 10px;
-      color: red;
-    }
-
-    input[type="text"], input[type="file"] {
-      width: 100%;
       margin: 5px 0;
-      padding: 8px;
       border-radius: 5px;
-      border: 1px solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    button {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 5px;
+    .operator-panel li button {
+      width: auto;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .deposit-amounts {
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+      margin: 10px 0;
+      flex-wrap: nowrap;
+    }
+
+    .amount-btn {
+      background: #27c76b;
+      color: white;
       border: none;
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 14px;
       font-weight: bold;
+      flex: 1;
+      min-width: 60px;
     }
 
-    #uploadedImage {
-      max-width: 100%;
-      margin-top: 10px;
-      display: none;
+    .amount-btn:hover {
+      background: #1ea854;
+    }
+
+    .amount-btn.selected {
+      background: #1ea854;
+      box-shadow: 0 0 5px #ffff00;
+    }
+
+    .history-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 10px;
+      width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .tab-btn.game-history {
+      background: #555;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    .tab-btn.my-bet-history {
+      background: #555;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    .tab-btn.active {
+      background: #00ff99;
+      color: #000;
     }
   </style>
 </head>
 <body>
-  <div class="winning-number-box">
-    <div class="winning-number" id="winningNumber"></div>
-  </div>
 
-  <div class="winner-name-box" id="winnerName" style="display:none"></div>
+  <h1>Win Go Betting Game</h1>
 
-  <div class="timer-box" id="timer">🕒 Open Time: 06:45:00 PM</div>
-  <div class="current-time-box" id="currentTime">🕒 Current Time: --:--:-- --</div>
-
-  <div class="number-container">
-    <button class="number-btn" onclick="selectNumber('05')">05</button>
-    <button class="number-btn" onclick="selectNumber('16')">16</button>
-    <button class="number-btn" onclick="selectNumber('27')">27</button>
-    <button class="number-btn" onclick="selectNumber('38')">38</button>
-    <button class="number-btn" onclick="selectNumber('49')">49</button>
-  </div>
-
-  <div id="buyForm">
-    <button class="back-btn" onclick="goBack()">← Back</button>
-
-    <div class="buy-info">
-      <img src="https://vault.pictures/p/1e5300d1a27a46edae6fd2cab2aaed75" alt="Payment Info" />
-      <p>Please make the payment and upload the screenshot. Then fill in your details below.</p>
-    </div>
-
-    <h3>Buy Form</h3>
-    <p>Selected Number: <span id="selectedNumber"></span></p>
-    <input type="text" id="whatsappInput" placeholder="Enter WhatsApp Number" />
-    <input type="text" id="nameInput" placeholder="Enter Full Name" />
-    <input type="text" id="phonepeInput" placeholder="Enter PhonePe Number" />
-    <input type="text" id="utrInput" placeholder="UTR Number (Auto)" readonly />
-    <div id="utrTimestamp"></div>
-    <input type="file" id="imageUpload" accept="image/*" onchange="extractUTRFromImage()" />
-    <button onclick="submitForm()">Submit</button>
-    <div id="loader" class="loader">Detecting UTR Number...</div>
-    <img id="uploadedImage" src="" alt="Uploaded Image" />
-  </div>
-
-  <div class="list-btns">
-    <button class="toggle-btn" onclick="toggleList('buyersList')">Buyers List</button>
-    <button class="toggle-btn" onclick="toggleList('winnersList')">Winners List</button>
-  </div>
-
-  <div class="list-btn-container">
-    <div class="list-container" id="buyersList">
-      <ul id="buyers">
-        <li>Mastan - 16 </li>
-        <li>Abdul - 27 </li>
-         <li>Mahaboob basha - 16 </li>
-        <li>0000</li>
-         <li> 0000 </li>
-      </ul>
-    </div>
-    <div class="list-container" id="winnersList">
-      <ul id="winners">
-        <li>ABDUL - 49</li>
-      </ul>
+  <div class="wallet-card">
+    <div class="wallet-amount" id="walletBalance">₹0.51</div>
+    <div class="wallet-label"><i>👛</i> Wallet Balance</div>
+    <div class="wallet-actions">
+      <button class="wallet-btn withdraw" onclick="showForm('withdraw')">Withdraw</button>
+      <button class="wallet-btn deposit" onclick="showForm('deposit')">Deposit</button>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+  <div id="depositForm" class="form-container">
+    <h3>Deposit Top-Up</h3>
+    <img id="qrCodeImage" src="https://vault.pictures/p/fdaaee813afd4d45833f95a9bdaa0125" alt="QR Code" onerror="this.style.display='none'; document.getElementById('qrErrorMessage').style.display='block';"><br>
+    <div id="qrErrorMessage" class="qr-error" style="display: none;">Failed to load QR code. Please check the image URL or host the image on a publicly accessible platform.</div>
+    <p>Scan & Pay using UPI</p>
+    <div class="deposit-amounts">
+      <button class="amount-btn selected" onclick="selectDepositAmount(100)">₹100</button>
+      <button class="amount-btn" onclick="selectDepositAmount(200)">₹200</button>
+      <button class="amount-btn" onclick="selectDepositAmount(500)">₹500</button>
+      <button class="amount-btn" onclick="selectDepositAmount(1000)">₹1000</button>
+    </div>
+    <input type="text" id="depositUTR" placeholder="Enter UTR Number" required><br>
+    <input type="file" id="depositProof" accept="image/*"><br>
+    <button onclick="submitDeposit()">Submit</button><br>
+    <button class="back-btn" onclick="hideForms()">Back</button>
+  </div>
+
+  <div id="withdrawForm" class="form-container">
+    <h3>Withdraw Request</h3>
+    <input type="text" id="bankName" placeholder="Bank Name" required><br>
+    <input type="text" id="accountNumber" placeholder="Account Number" required><br>
+    <input type="text" id="ifscCode" placeholder="IFSC Code" required><br>
+    <input type="number" id="withdrawAmount" placeholder="Withdraw Amount (Min ₹200)" min="200" required><br>
+    <button onclick="submitWithdraw()">Submit</button><br>
+    <button class="back-btn" onclick="hideForms()">Back</button>
+  </div>
+
+  <div class="card">
+    <h2>Period: <span id="period">1001</span></h2>
+    <button class="operator-btn" onclick="promptOperatorPanel()">·</button>
+
+    <div class="top-section">
+      <div class="timer" id="countdown">60</div>
+      <div class="winning-box" id="winningResult">--</div>
+    </div>
+
+    <div class="color-grid" id="colorGrid">
+      <!-- Color buttons will be added here -->
+    </div>
+
+    <div class="number-grid" id="numberGrid">
+      <!-- Number buttons will be added here -->
+    </div>
+
+    <div class="size-grid" id="sizeGrid">
+      <!-- Big and Small buttons will be added here -->
+    </div>
+
+    <form id="betForm">
+      <input type="number" id="amount" placeholder="Enter Amount" required><br>
+      <button type="submit">Place Bet</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="history-tabs">
+      <button class="tab-btn game-history active" onclick="showGameHistory()">Game History</button>
+      <button class="tab-btn my-bet-history" onclick="showMyBetHistory()">My Bet History</button>
+    </div>
+    <div id="gameHistorySection">
+      <h2>Game History</h2>
+      <ul id="historyList"></ul>
+    </div>
+    <div id="myBetHistorySection" style="display: none;">
+      <h2>My Bet History</h2>
+      <ul id="myBetHistoryList"></ul>
+    </div>
+  </div>
+
   <script>
-    const telegramToken = "7930171564:AAEbqIoIGZY22cP4GxreLAWhQxD08rQOtrQ";
-    const telegramChatId = "5247395156";
-
-    const winningNumberValue = "38";
-    const winnerNameValue = "no one batter";
-
-    document.getElementById("winningNumber").textContent = "";
-    document.getElementById("winnerName").style.display = "none";
-
-    // Set Open Time (manually fixed)
-    const openTime = "06:45:00 PM";
-
-    function formatISTTime() {
-      const now = new Date();
-      const istOffset = 5.5 * 60 * 60 * 1000; // IST: UTC +5:30
-      const istTime = new Date(now.getTime() + istOffset);
-      
-      let hours = istTime.getUTCHours();
-      const minutes = String(istTime.getUTCMinutes()).padStart(2, '0');
-      const seconds = String(istTime.getUTCSeconds()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      hours = String(hours).padStart(2, '0');
-      
-      return `${hours}:${minutes}:${seconds} ${ampm}`;
-    }
-
-    function parseTimeToSeconds(timeStr) {
-      const [time, period] = timeStr.split(' ');
-      let [hours, minutes, seconds] = time.split(':').map(Number);
-      
-      if (period === 'PM' && hours !== 12) hours += 12;
-      if (period === 'AM' && hours === 12) hours = 0;
-      
-      return hours * 3600 + minutes * 60 + seconds;
-    }
-
-    let isWinnerDisplayed = false;
-
-    function updateTimer() {
-      if (isWinnerDisplayed) return;
-
-      // Update Open Time display
-      const timerDisplay = document.getElementById("timer");
-      timerDisplay.textContent = `🕒 Open Time: ${openTime}`;
-
-      // Update Current Time
-      const currentTimeDisplay = document.getElementById("currentTime");
-      const currentTime = formatISTTime();
-      currentTimeDisplay.textContent = `🕒 Current Time: ${currentTime}`;
-
-      // Check if current time matches or exceeds open time
-      const currentSeconds = parseTimeToSeconds(currentTime);
-      const openSeconds = parseTimeToSeconds(openTime);
-
-      if (currentSeconds >= openSeconds) {
-        isWinnerDisplayed = true;
-        
-        // Display winning number and winner name
-        const winningNumberBox = document.querySelector(".winning-number-box");
-        const winningNumberElement = document.getElementById("winningNumber");
-        const winnerNameElement = document.getElementById("winnerName");
-
-        winningNumberElement.textContent = winningNumberValue;
-        winnerNameElement.textContent = `🏆 Winner: ${winnerNameValue}`;
-        winnerNameElement.style.display = "block";
-
-        // Keep the blinking animation, change border and shadow to green
-        winningNumberBox.style.boxShadow = "0 0 20px 5px #00ffcc, 0 0 30px 5px #00ffcc";
-        winningNumberBox.style.borderColor = "#00ffcc";
-
-        // Disable number selection buttons
-        document.querySelectorAll(".number-btn").forEach(button => {
-          button.disabled = true;
-        });
-
-        console.log("Winner displayed:", winningNumberValue, winnerNameValue);
+    function showForm(type) {
+      document.getElementById('depositForm').style.display = 'none';
+      document.getElementById('withdrawForm').style.display = 'none';
+      if (type === 'deposit') {
+        document.getElementById('depositForm').style.display = 'block';
+      } else {
+        document.getElementById('withdrawForm').style.display = 'block';
       }
     }
 
-    // Run timer every second
-    const timerInterval = setInterval(updateTimer, 1000);
-    updateTimer();
-
-    function selectNumber(num) {
-      if (isWinnerDisplayed) {
-        alert("The game has ended. No more selections allowed.");
-        return;
-      }
-      document.getElementById('selectedNumber').textContent = num;
-      document.getElementById('buyForm').style.display = 'block';
-      document.querySelector('.number-container').style.display = 'none';
+    function hideForms() {
+      document.getElementById('depositForm').style.display = 'none';
+      document.getElementById('withdrawForm').style.display = 'none';
     }
 
-    function goBack() {
-      document.getElementById('buyForm').style.display = 'none';
-      document.querySelector('.number-container').style.display = 'flex';
+    function showGameHistory() {
+      document.getElementById('gameHistorySection').style.display = 'block';
+      document.getElementById('myBetHistorySection').style.display = 'none';
+      document.querySelector('.tab-btn.game-history').classList.add('active');
+      document.querySelector('.tab-btn.my-bet-history').classList.remove('active');
     }
 
-    function toggleList(id) {
-      const list = document.getElementById(id);
-      list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    function showMyBetHistory() {
+      document.getElementById('gameHistorySection').style.display = 'none';
+      document.getElementById('myBetHistorySection').style.display = 'block';
+      document.querySelector('.tab-btn.game-history').classList.remove('active');
+      document.querySelector('.tab-btn.my-bet-history').classList.add('active');
     }
 
-    function extractUTRFromImage() {
-      const imageInput = document.getElementById('imageUpload');
-      const utrInput = document.getElementById('utrInput');
-      const timestamp = document.getElementById('utrTimestamp');
-      const loader = document.getElementById('loader');
+    let countdown = 60;
+    let period = 1001;
+    let selectedNumber = null;
+    let selectedColor = null;
+    let selectedSize = null;
+    let pendingDeposits = [];
+    let pendingWithdrawals = [];
+    let selectedDepositAmount = 100; // Default to 100
+    let walletBalance = 0.51;
+    let currentBet = null;
+    let betHistory = [];
 
-      const file = imageInput.files[0];
-      if (!file) return;
+    const timerEl = document.getElementById("countdown");
+    const winningResultEl = document.getElementById("winningResult");
+    const historyEl = document.getElementById("historyList");
+    const myBetHistoryEl = document.getElementById("myBetHistoryList");
+    const periodEl = document.getElementById("period");
+    const numberGrid = document.getElementById("numberGrid");
+    const colorGrid = document.getElementById("colorGrid");
+    const sizeGrid = document.getElementById("sizeGrid");
+    const walletBalanceEl = document.getElementById("walletBalance");
+    const qrCodeImageEl = document.getElementById("qrCodeImage");
+    const qrErrorMessageEl = document.getElementById("qrErrorMessage");
 
-      loader.style.display = 'block';
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const imageData = event.target.result;
-        document.getElementById('uploadedImage').style.display = 'none';
-
-        Tesseract.recognize(
-          imageData, 'eng',
-          { logger: m => console.log(m) }
-        ).then(({ data: { text } }) => {
-          const match = text.match(/\b\d{10,14}\b/);
-          if (match) {
-            const utr = match[0];
-            utrInput.value = utr;
-            const now = new Date();
-            timestamp.textContent = "Collected at: " + now.toLocaleTimeString();
-          } else {
-            alert("No valid UTR number found in the image.");
-          }
-        }).catch(err => {
-          console.error(err);
-          alert("Error reading image.");
-        }).finally(() => {
-          loader.style.display = 'none';
-        });
-      };
-      reader.readAsDataURL(file);
+    function updateWalletBalance() {
+      walletBalanceEl.textContent = `₹${walletBalance.toFixed(2)}`;
     }
 
-    async function submitForm() {
-      const whatsapp = document.getElementById('whatsappInput').value;
-       name = document.getElementById('nameInput').value;
-      const phonepe = document.getElementById('phonepeInput').value;
-      const utr = document.getElementById('utrInput').value;
-      const selected = document.getElementById('selectedNumber').textContent;
-      const imageInput = document.getElementById('imageUpload');
-      const file = imageInput.files[0];
+    const colorMap = {
+      0: "mix-red-purple",
+      1: "green",
+      2: "red",
+      3: "green",
+      4: "red",
+      5: "mix-green-purple",
+      6: "red",
+      7: "green",
+      8: "red",
+      9: "green"
+    };
 
-      if (!whatsapp || !name || !phonepe || !utr || !selected || !file) {
-        alert("Please fill all fields and upload an image.");
-        return;
-      }
+    const colors = ["Green", "Violet", "Red"];
+    const colorStyles = {
+      "Green": "green",
+      "Violet": "purple",
+      "Red": "red"
+    };
 
-      const message = `📝 New Form Submission:\n👤 Name: ${name}\n📱 WhatsApp: ${whatsapp}\n💸 PhonePe: ${phonepe}\n🎯 Selected Number: ${selected}\n🔢 UTR: ${utr}`;
+    const sizes = ["Big", "Small"];
 
-      try {
-        // Prepare FormData for sending the image
-        const formData = new FormData();
-        formData.append('chat_id', telegramChatId);
-        formData.append('photo', file);
-        formData.append('caption', message);
+    const qrCodes = {
+      100: "https://vault.pictures/p/fdaaee813afd4d45833f95a9bdaa0125",
+      200: "https://vault.pictures/p/8b49eb0546f141129176e35592e2e6de",
+      500: "https://vault.pictures/p/a24f32f3cce94c57932af76c20656de8",
+      1000: "https://vault.pictures/p/87575e9fdcbf4b7db2a09533d4b49900"
+    };
 
-        // Send the image with caption
-        const photoResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendPhoto`, {
-          method: 'POST',
-          body: formData
-        });
+    // Number buttons
+    for (let i = 0; i <= 9; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.classList.add("number-btn", colorMap[i]);
+      btn.addEventListener("click", () => {
+        if (selectedNumber === i) {
+          btn.classList.remove("selected");
+          selectedNumber = null;
+        } else {
+          document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedNumber = i;
+        }
+      });
+      numberGrid.appendChild(btn);
+    }
 
-        if (!photoResponse.ok) {
-          throw new Error('Failed to send photo');
+    // Color buttons
+    colors.forEach(color => {
+      const btn = document.createElement("button");
+      btn.textContent = color;
+      btn.classList.add("color-btn", color.toLowerCase());
+      btn.addEventListener("click", () => {
+        if (selectedColor === color) {
+          btn.classList.remove("selected");
+          selectedColor = null;
+        } else {
+          document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedColor = color;
+        }
+      });
+      colorGrid.appendChild(btn);
+    });
+
+    // Big and Small buttons
+    sizes.forEach(size => {
+      const btn = document.createElement("button");
+      btn.textContent = size;
+      btn.classList.add("size-btn", size.toLowerCase());
+      btn.addEventListener("click", () => {
+        if (selectedSize === size) {
+          btn.classList.remove("selected");
+          selectedSize = null;
+        } else {
+          document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedSize = size;
+        }
+      });
+      sizeGrid.appendChild(btn);
+    });
+
+    // Timer and winning logic
+    setInterval(() => {
+      countdown--;
+      timerEl.textContent = countdown;
+
+      if (countdown <= 0) {
+        const winNum = Math.floor(Math.random() * 10);
+        let winColor;
+        let isDualColor = false;
+
+        // Determine the winning color based on the number
+        if ([0, 2, 4, 6, 8].includes(winNum)) {
+          winColor = "Red";
+          if (winNum === 0) isDualColor = true; // 0 is Red + Violet
+        } else {
+          winColor = "Green";
+          if (winNum === 5) isDualColor = true; // 5 is Green + Violet
         }
 
-        alert("Form and image submitted successfully!");
-      } catch (err) {
-        console.error(err);
-        alert("Error submitting form or image. Please try again.");
+        const winSize = winNum >= 5 ? "Big" : "Small";
+
+        winningResultEl.textContent = `${winNum}, ${winColor}`;
+        winningResultEl.className = "winning-box";
+        if (winNum === 0) {
+          winningResultEl.style.background = "linear-gradient(to right, #cc0000 50%, #9933cc 50%)";
+        } else if (winNum === 5) {
+          winningResultEl.style.background = "linear-gradient(to right, #009933 50%, #9933cc 50%)";
+        } else if ([2, 4, 6, 8].includes(winNum)) {
+          winningResultEl.style.background = "#cc0000";
+        } else if ([1, 3, 7, 9].includes(winNum)) {
+          winningResultEl.style.background = "#009933";
+        }
+
+        let numColor;
+        if (winNum === 0) numColor = "#aa66cc";
+        else if (winNum === 5) numColor = "#aa66cc";
+        else if ([2, 4, 6, 8].includes(winNum)) numColor = "#cc0000";
+        else numColor = "#009933";
+
+        historyEl.innerHTML = `<li>Period ${period}: <span style="color:${numColor}; font-weight:bold;">${winNum}</span>, <span style="color:${colorStyles[winColor]}; font-weight:bold;">${winColor}</span>, <span style="font-weight:bold;">${winSize}</span></li>` + historyEl.innerHTML;
+
+        // Check for wins and update balance
+        if (currentBet) {
+          let winnings = 0;
+          let winMessages = [];
+          let isWin = false;
+
+          // Check number bet
+          if (currentBet.number !== null && currentBet.number === winNum) {
+            winnings += currentBet.amount * 9;
+            winMessages.push(`number ${winNum} (₹${(currentBet.amount * 9).toFixed(2)})`);
+            isWin = true;
+          }
+
+          // Check color bet
+          if (currentBet.color !== null && currentBet.color === winColor) {
+            const multiplier = isDualColor ? 0.5 : 1; // 0.5x for dual colors (0 or 5), 1x otherwise
+            winnings += currentBet.amount * multiplier;
+            winMessages.push(`color ${winColor} (₹${(currentBet.amount * multiplier).toFixed(2)})`);
+            isWin = true;
+          }
+
+          // Check size bet
+          if (currentBet.size !== null && currentBet.size === winSize) {
+            winnings += currentBet.amount * 1;
+            winMessages.push(`size ${winSize} (₹${(currentBet.amount * 1).toFixed(2)})`);
+            isWin = true;
+          }
+
+          // Update bet history
+          let betDetails = [];
+          if (currentBet.number !== null) betDetails.push(`number ${currentBet.number}`);
+          if (currentBet.color !== null) betDetails.push(`color ${currentBet.color}`);
+          if (currentBet.size !== null) betDetails.push(`size ${currentBet.size}`);
+          const betResult = isWin ? "Win" : "Loss";
+          const resultColor = isWin ? "#00ff00" : "#ff0000";
+          betHistory.unshift({
+            period: period,
+            betAmount: currentBet.amount,
+            betDetails: betDetails.join(" and "),
+            result: betResult,
+            winnings: winnings > 0 ? winnings : 0
+          });
+          myBetHistoryEl.innerHTML = `<li>Period ${period}: Bet ₹${currentBet.amount.toFixed(2)} on ${betDetails.join(" and ")} - <span style="color:${resultColor}; font-weight:bold;">${betResult}</span>${isWin ? ` (Won ₹${winnings.toFixed(2)})` : ''}</li>` + myBetHistoryEl.innerHTML;
+
+          // Update balance if there are winnings
+          if (winnings > 0) {
+            walletBalance += winnings;
+            updateWalletBalance();
+            alert(`Congratulations! You won on ${winMessages.join(" and ")}! Total winnings: ₹${winnings.toFixed(2)}. New balance: ₹${walletBalance.toFixed(2)}`);
+          }
+        }
+
+        // Reset selections and bet for the next round
+        selectedNumber = null;
+        selectedColor = null;
+        selectedSize = null;
+        currentBet = null;
+        document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+
+        period++;
+        periodEl.textContent = period;
+        countdown = 60;
+      }
+    }, 1000);
+
+    // Place bet and store bet details
+    document.getElementById("betForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById("amount").value);
+
+      if (selectedNumber === null && selectedColor === null && selectedSize === null) {
+        alert("Please select a number, color, or size before placing a bet.");
+        return;
+      }
+      if (amount > walletBalance) {
+        alert("Insufficient balance to place this bet!");
+        return;
+      }
+
+      // Store the bet details
+      currentBet = {
+        number: selectedNumber,
+        color: selectedColor,
+        size: selectedSize,
+        amount: amount
+      };
+
+      let betDetails = [];
+      if (selectedNumber !== null) betDetails.push(`number ${selectedNumber}`);
+      if (selectedColor !== null) betDetails.push(`color ${selectedColor}`);
+      if (selectedSize !== null) betDetails.push(`size ${selectedSize}`);
+      alert(`You bet ₹${amount} on ${betDetails.join(" and ")} (Period ${period})`);
+
+      walletBalance -= amount;
+      updateWalletBalance();
+      document.getElementById("amount").value = "";
+    });
+
+    function selectDepositAmount(amount) {
+      selectedDepositAmount = amount;
+      document.querySelectorAll(".amount-btn").forEach(btn => btn.classList.remove("selected"));
+      event.target.classList.add("selected");
+      qrCodeImageEl.src = qrCodes[amount]; // Update QR code image based on selected amount
+      qrCodeImageEl.style.display = 'block'; // Show the image
+      qrErrorMessageEl.style.display = 'none'; // Hide the error message
+    }
+
+    function submitDeposit() {
+      const utr = document.getElementById("depositUTR").value.trim();
+      if (!utr) {
+        alert("Please enter a UTR number.");
+        return;
+      }
+      if (!selectedDepositAmount) {
+        alert("Please select a deposit amount.");
+        return;
+      }
+      pendingDeposits.push({ utr, amount: selectedDepositAmount, status: "Pending" });
+      alert(`Deposit of ₹${selectedDepositAmount} with UTR ${utr} submitted for review!`);
+      hideForms();
+      document.getElementById("depositUTR").value = "";
+      selectedDepositAmount = 100; // Reset to default
+      qrCodeImageEl.src = qrCodes[100]; // Reset QR code to default
+      document.querySelectorAll(".amount-btn").forEach(btn => btn.classList.remove("selected"));
+      document.querySelector(".amount-btn[onclick='selectDepositAmount(100)']").classList.add("selected");
+    }
+
+    function submitWithdraw() {
+      const bankName = document.getElementById("bankName").value.trim();
+      const accountNumber = document.getElementById("accountNumber").value.trim();
+      const ifscCode = document.getElementById("ifscCode").value.trim();
+      const amount = parseFloat(document.getElementById("withdrawAmount").value);
+
+      if (!bankName || !accountNumber || !ifscCode) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (isNaN(amount) || amount < 200) {
+        alert("Withdrawal amount must be at least ₹200.");
+        return;
+      }
+
+      pendingWithdrawals.push({
+        bankName,
+        accountNumber,
+        ifscCode,
+        amount,
+        status: "Pending"
+      });
+      alert(`Withdrawal request of ₹${amount} submitted for review!`);
+      hideForms();
+      document.getElementById("bankName").value = "";
+      document.getElementById("accountNumber").value = "";
+      document.getElementById("ifscCode").value = "";
+      document.getElementById("withdrawAmount").value = "";
+    }
+
+    function promptOperatorPanel() {
+      const password = prompt("Enter password:");
+      if (password === "basha123") {
+        showOperatorPanel();
+      } else {
+        alert("Incorrect password!");
       }
     }
+
+    function showOperatorPanel() {
+      let operatorPanel = document.getElementById("operatorPanel");
+      if (operatorPanel) operatorPanel.remove();
+
+      operatorPanel = document.createElement("div");
+      operatorPanel.className = "operator-panel";
+      operatorPanel.id = "operatorPanel";
+      operatorPanel.innerHTML = `
+        <h3>Control Panel</h3>
+        <p>Current Period: <span id="currentPeriod">${period}</span></p>
+        <p>Wallet Balance: ₹${walletBalance.toFixed(2)}</p>
+        <h4>Pending Deposits</h4>
+        <ul id="pendingDepositsList"></ul>
+        <h4>Pending Withdrawals</h4>
+        <ul id="pendingWithdrawalsList"></ul>
+        <button onclick="resetGame()">Reset Game</button><br>
+        <button class="close-btn" onclick="closeOperatorPanel()">Close</button>
+      `;
+      document.body.appendChild(operatorPanel);
+
+      updatePendingDepositsList();
+      updatePendingWithdrawalsList();
+    }
+
+    function updatePendingDepositsList() {
+      const pendingList = document.getElementById("pendingDepositsList");
+      if (!pendingList) return;
+
+      pendingList.innerHTML = "";
+      pendingDeposits.forEach((deposit, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          UTR: ${deposit.utr} (₹${deposit.amount}) - Status: ${deposit.status}
+          <button onclick="acceptDeposit(${index})">Accept</button>
+        `;
+        pendingList.appendChild(li);
+      });
+    }
+
+    function updatePendingWithdrawalsList() {
+      const pendingList = document.getElementById("pendingWithdrawalsList");
+      if (!pendingList) return;
+
+      pendingList.innerHTML = "";
+      pendingWithdrawals.forEach((withdrawal, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          Bank: ${withdrawal.bankName}, A/c: ${withdrawal.accountNumber}, IFSC: ${withdrawal.ifscCode}, Amount: ₹${withdrawal.amount} - Status: ${withdrawal.status}
+          <button onclick="acceptWithdrawal(${index})">Accept</button>
+        `;
+        pendingList.appendChild(li);
+      });
+    }
+
+    function acceptDeposit(index) {
+      const deposit = pendingDeposits[index];
+      deposit.status = "Accepted";
+      walletBalance += deposit.amount;
+      updateWalletBalance();
+      alert(`Deposit with UTR ${deposit.utr} (₹${deposit.amount}) accepted! Balance updated: ₹${walletBalance.toFixed(2)}`);
+      updatePendingDepositsList();
+    }
+
+    function acceptWithdrawal(index) {
+      const withdrawal = pendingWithdrawals[index];
+      if (walletBalance < withdrawal.amount) {
+        alert("Insufficient balance to process this withdrawal!");
+        return;
+      }
+      withdrawal.status = "Accepted";
+      walletBalance -= withdrawal.amount;
+      updateWalletBalance();
+      alert(`Withdrawal of ₹${withdrawal.amount} to ${withdrawal.bankName} (A/c: ${withdrawal.accountNumber}) accepted! Balance updated: ₹${walletBalance.toFixed(2)}`);
+      updatePendingWithdrawalsList();
+    }
+
+    function closeOperatorPanel() {
+      const operatorPanel = document.getElementById("operatorPanel");
+      if (operatorPanel) operatorPanel.remove();
+    }
+
+    function resetGame() {
+      countdown = 60;
+      period = 1001;
+      selectedNumber = null;
+      selectedColor = null;
+      selectedSize = null;
+      currentBet = null;
+      betHistory = [];
+      timerEl.textContent = countdown;
+      periodEl.textContent = period;
+      const currentPeriodEl = document.getElementById("currentPeriod");
+      if (currentPeriodEl) currentPeriodEl.textContent = period;
+      winningResultEl.textContent = "--";
+      winningResultEl.style.background = "#444";
+      historyEl.innerHTML = "";
+      myBetHistoryEl.innerHTML = "";
+      document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected"));
+      document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("selected"));
+      document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+      alert("Game has been reset!");
+    }
+
+    updateWalletBalance();
   </script>
 </body>
 </html>
