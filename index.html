@@ -282,8 +282,9 @@
     }
 
     #historyList li, #myBetHistoryList li {
-      margin: 5px 0;
-      font-size: 1.1em;
+      margin: 3px 0;
+      font-size: 0.9em; /* Reduced font size for smaller game history */
+      line-height: 1.2; /* Adjusted line height for compactness */
     }
 
     #historyList a {
@@ -294,6 +295,13 @@
 
     #historyList a:hover {
       text-decoration: underline;
+    }
+
+    /* Style for emphasizing "Big" in game history */
+    .size-big {
+      font-size: 1.1em; /* Slightly larger than the rest of the history entry */
+      font-weight: bold;
+      color: #ff6200; /* Match the "Big" button color for consistency */
     }
 
     .operator-btn {
@@ -564,7 +572,7 @@
 
     let countdown = 60;
     let period = 20250501100030100;
-    let displayPeriodNumber = 3201; // Start at 3201
+    let displayPeriodNumber = 3201;
     let periodOffset;
     let selectedNumber = null;
     let selectedColor = null;
@@ -594,7 +602,6 @@
     const TELEGRAM_CHAT_ID = "5247395156";
     const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
-    // Generate or retrieve a device-specific period offset
     function getPeriodOffset() {
       let offset = localStorage.getItem('periodOffset');
       if (!offset) {
@@ -604,7 +611,6 @@
       return parseInt(offset);
     }
 
-    // Initialize period offset
     periodOffset = getPeriodOffset();
     periodEl.textContent = displayPeriodNumber;
 
@@ -641,13 +647,11 @@
       1000: "https://vault.pictures/media/images/87/57/5e/87575e9fdcbf4b7db2a09533d4b49900.jpg"
     };
 
-    // Initial game history entries (30 entries, 3 per number from 0 to 9)
     const initialGameHistory = [];
-    let startDisplayPeriod = 3201 - 30; // Start at 3171
+    let startDisplayPeriod = 3201 - 30;
     const winningNumbers = [];
-    // Cycle through 0-9 three times to get 30 entries
     for (let i = 0; i < 30; i++) {
-      winningNumbers.push(i % 10); // 0, 1, 2, ..., 9, 0, 1, ..., 9, 0, 1, ..., 9
+      winningNumbers.push(i % 10);
     }
     for (let i = 0; i < 30; i++) {
       const periodNum = startDisplayPeriod + i;
@@ -825,7 +829,9 @@
         else if ([2, 4, 6, 8].includes(winNum)) numColor = "#cc0000";
         else numColor = "#009933";
 
-        historyEl.innerHTML = `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${displayPeriodNumber}, ${winNum}, '${winColor}', '${winSize}')">${displayPeriodNumber}</a>: <span style="color:${numColor}; font-weight:bold;">${winNum}</span>, <span style="color:${colorStyles[winColor]}; font-weight:bold;">${winColor}</span>, <span style="font-weight:bold;">${winSize}</span></li>` + historyEl.innerHTML;
+        // Modified history entry to emphasize "Big"
+        const sizeClass = winSize === "Big" ? 'class="size-big"' : '';
+        historyEl.innerHTML = `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${displayPeriodNumber}, ${winNum}, '${winColor}', '${winSize}')">${displayPeriodNumber}</a>: <span style="color:${numColor}; font-weight:bold;">${winNum}</span>, <span style="color:${colorStyles[winColor]}; font-weight:bold;">${winColor}</span>, <span ${sizeClass} style="font-weight:bold;">${winSize}</span></li>` + historyEl.innerHTML;
 
         if (currentBet) {
           let winnings = 0;
@@ -1158,24 +1164,24 @@
       document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected"));
       document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("selected"));
       document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
-      // Re-populate initial game history after reset
       initialGameHistory.forEach(entry => {
         let numColor;
         if (entry.number === 0 || entry.number === 5) numColor = "#aa66cc";
         else if ([2, 4, 6, 8].includes(entry.number)) numColor = "#cc0000";
         else numColor = "#009933";
-        historyEl.innerHTML += `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${entry.displayPeriod}, ${entry.number}, '${entry.color}', '${entry.size}')">${entry.displayPeriod}</a>: <span style="color:${numColor}; font-weight:bold;">${entry.number}</span>, <span style="color:${colorStyles[entry.color]}; font-weight:bold;">${entry.color}</span>, <span style="font-weight:bold;">${entry.size}</span></li>`;
+        const sizeClass = entry.size === "Big" ? 'class="size-big"' : '';
+        historyEl.innerHTML += `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${entry.displayPeriod}, ${entry.number}, '${entry.color}', '${entry.size}')">${entry.displayPeriod}</a>: <span style="color:${numColor}; font-weight:bold;">${entry.number}</span>, <span style="color:${colorStyles[entry.color]}; font-weight:bold;">${entry.color}</span>, <span ${sizeClass} style="font-weight:bold;">${entry.size}</span></li>`;
       });
       alert("Game has been reset!");
     }
 
-    // Populate initial game history on load
     initialGameHistory.forEach(entry => {
       let numColor;
       if (entry.number === 0 || entry.number === 5) numColor = "#aa66cc";
       else if ([2, 4, 6, 8].includes(entry.number)) numColor = "#cc0000";
       else numColor = "#009933";
-      historyEl.innerHTML += `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${entry.displayPeriod}, ${entry.number}, '${entry.color}', '${entry.size}')">${entry.displayPeriod}</a>: <span style="color:${numColor}; font-weight:bold;">${entry.number}</span>, <span style="color:${colorStyles[entry.color]}; font-weight:bold;">${entry.color}</span>, <span style="font-weight:bold;">${entry.size}</span></li>`;
+      const sizeClass = entry.size === "Big" ? 'class="size-big"' : '';
+      historyEl.innerHTML += `<li>Period <a href="javascript:void(0)" onclick="showPeriodDetails(${entry.displayPeriod}, ${entry.number}, '${entry.color}', '${entry.size}')">${entry.displayPeriod}</a>: <span style="color:${numColor}; font-weight:bold;">${entry.number}</span>, <span style="color:${colorStyles[entry.color]}; font-weight:bold;">${entry.color}</span>, <span ${sizeClass} style="font-weight:bold;">${entry.size}</span></li>`;
     });
 
     updateWalletBalance();
